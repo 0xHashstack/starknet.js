@@ -408,7 +408,7 @@ export class RpcProvider implements ProviderInterface {
     retryInterval: number = 8000,
     successStates = ['ACCEPTED_ON_L1', 'ACCEPTED_ON_L2', 'PENDING']
   ) {
-    const errorStates = ['REJECTED', 'NOT_RECEIVED'];
+    const errorStates = ['REJECTED', 'NOT_RECEIVED', 'REVERTED'];
     let { retries } = this;
     let onchain = false;
     let txReceipt: any = {};
@@ -419,16 +419,16 @@ export class RpcProvider implements ProviderInterface {
       try {
         // eslint-disable-next-line no-await-in-loop
         txReceipt = await this.getTransactionReceipt(txHash);
-
-        if (!('status' in txReceipt)) {
+        console.log('checking status', txHash, txReceipt.finality_status);
+        if (!('finality_status' in txReceipt)) {
           const error = new Error('pending transaction');
           throw error;
         }
 
-        if (txReceipt.status && successStates.includes(txReceipt.status)) {
+        if (txReceipt.finality_status && successStates.includes(txReceipt.finality_status)) {
           onchain = true;
-        } else if (txReceipt.status && errorStates.includes(txReceipt.status)) {
-          const message = txReceipt.status;
+        } else if (txReceipt.finality_status && errorStates.includes(txReceipt.finality_status)) {
+          const message = txReceipt.finality_status;
           const error = new Error(message) as Error & { response: any };
           error.response = txReceipt;
           throw error;
