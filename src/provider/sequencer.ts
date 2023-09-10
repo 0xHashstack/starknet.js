@@ -498,7 +498,7 @@ export class SequencerProvider implements ProviderInterface {
     retryInterval: number = 8000,
     successStates = ['ACCEPTED_ON_L1', 'ACCEPTED_ON_L2', 'PENDING']
   ) {
-    const errorStates = ['REJECTED', 'NOT_RECEIVED'];
+    const errorStates = ['REJECTED', 'NOT_RECEIVED', 'REVERTED'];
     let onchain = false;
     let res;
 
